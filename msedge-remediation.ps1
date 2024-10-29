@@ -1,1 +1,1 @@
-Start-Process "msedge.exe"
+powershell.exe -ExecutionPolicy Bypass -File "C:\Scripts\microsoft-edge.ps1"
