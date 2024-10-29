@@ -2,10 +2,10 @@
 $UninstallPath = "C:\Program Files\TeamViewer\uninstall.exe"
 
 # Check if the uninstall string is found
-if (-Not(Test-Path $UninstallPath)) {
-    # Run the uninstall executable file
+if (Test-Path $UninstallPath) {
+    # Run the uninstall executable file (uninstall)
     exit 1
 } else {
-    # File not found
+    # TeamViewer Full is not found
     exit 0
 }
