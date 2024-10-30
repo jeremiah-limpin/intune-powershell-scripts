@@ -1,25 +1,30 @@
-# Define the PowerShell script to open Microsoft Edge
+# Define the PowerShell script content to open Microsoft Edge
 $scriptContent = @"
-Start-Process "msedge.exe"
+Start-Process 'msedge.exe'
 "@
 
-# Define the file path for the powershell script that opens MS Edge
+# Define the file path for the PowerShell script
 $scriptPath = "C:\Scripts\microsoft-edge.ps1"
 
 if (-not (Test-Path $scriptPath)) {
-    # If file not found, proceeds the remediation script
+    # If the script file is not found, create it with specified content
     Set-Content -Path $scriptPath -Value $scriptContent
-
-    # Define the task trigger for first boot
+    
+    # Define the task action to run the script
+    $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-File `"$scriptPath`""
+    
+    # Define the task trigger for system startup
     $trigger = New-ScheduledTaskTrigger -AtStartup
-
+    
     # Define the task settings
     $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable
-
-    # Register the task in Task Scheduler >> Register-ScheduledTask -Action $action -Trigger $trigger -Settings $settings -TaskName "OpenMicrosoftEdgeAtFirstBoot" -Description "Opens Microsoft Edge upon the first boot of the device"
-
-    # Proceeds with running the remediation script.
+    
+    # Register the scheduled task
+    Register-ScheduledTask -Action $action -Trigger $trigger -Settings $settings -TaskName "OpenMicrosoftEdge" -Description "Opens Microsoft Edge at startup if the script is missing"
+    
+    # Exit with code 1 to indicate remediation occurred
     exit 1
-}else{
+} else {
+    # Exit with code 0 if the script exists
     exit 0
 }
