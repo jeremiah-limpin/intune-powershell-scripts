@@ -21,7 +21,7 @@ if (Test-Path $timestampFile) {
     $lastRunDate = Get-Content -Path $timestampFile | Out-String | Get-Date
     $daysSinceLastRun = ($currentDate - $lastRunDate).Days
     if ($daysSinceLastRun -ge $runInterval) {
-        # 1 days have passed since last run. Triggering remediation."
+        # 1 day/s have passed since last run. Triggering remediation."
         exit 1
     } else {
         # Detection successful: All files are present and 30 days have not yet passed."
