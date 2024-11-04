@@ -9,7 +9,7 @@ $speedtestExe = Join-Path $speedtestFolder "speedtest.exe"
 $computerName = $env:COMPUTERNAME
 
 # Set the file name and path of the output
-$resultsFilePath = Join-Path $speedtestFolder "speedtest_result_of_$computerName.xml"
+$resultsFilePath = Join-Path $speedtestFolder "speedtest_result_of_$computerName.txt"
 $logFile = Join-Path $speedtestFolder "error_log.txt"
 
 # Ensure speedtest folder exists

@@ -9,7 +9,7 @@ $speedtestExe = Join-Path $speedtestFolder "speedtest.exe"
 $computerName = $env:COMPUTERNAME
 
 # Set the file name and path of the output
-$resultsFilePath = Join-Path $speedtestFolder "speedtest_result_of_$computerName.xml"
+$resultsFilePath = Join-Path $speedtestFolder "speedtest_result_of_$computerName.txt"
 $logFile = Join-Path $speedtestFolder "error_log.txt"
 
 # Ensure speedtest folder exists
@@ -65,27 +65,24 @@ catch {
 
 # Send email with results
 try {
-    $Outlook = Get-Process -Name "OUTLOOK" -ErrorAction SilentlyContinue
-    if (-Not $Outlook) {
-        Write-Warning "Outlook is not running or installed. Cannot send the email."
-        exit
-    }
-
+    # Create a new Outlook application instance silently
     $OutlookApp = New-Object -ComObject Outlook.Application
-    $Mail = $OutlookApp.CreateItem(0)
+    $Mail = $OutlookApp.CreateItem(0)  # 0 refers to a MailItem in Outlook
+
     $Mail.Subject = "Speedtest Results for $env:COMPUTERNAME"
-    $Mail.Body = "Attached are the Speedtest results for $env:COMPUTERNAME."
+    $Mail.Body = "Attached is the Speedtest result for $env:COMPUTERNAME."
     $Mail.To = "helpdesk@thebackroomop.com"
     $Mail.Attachments.Add($resultsFilePath)
     $Mail.Send()
-    Write-Host "Email sent successfully with Speedtest results."
+        
+    Write-Host "Email sent successfully."
+    
 } catch {
     Write-Error "Error sending email: $_"
     "[$(Get-Date)] Error: $_" | Out-File -FilePath $logFile -Append
 }
 
 # Clean up temporary files
-$temporaryFiles = Join-Path $speedtestFolder "*.tmp"
-if (Test-Path $temporaryFiles) {
-    Remove-Item $temporaryFiles -Force -ErrorAction SilentlyContinue
+if (Test-Path "$speedtestFolder\speedtest\*.tmp") {
+    Remove-Item "$speedtestFolder\speedtest\*.tmp" -Force -ErrorAction SilentlyContinue
 }
