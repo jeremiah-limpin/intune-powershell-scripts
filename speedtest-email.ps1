@@ -1,64 +1,66 @@
-# Get the file path of Documents folder in OneDrive
+# Get the file path of Documents folder of OneDrive
 $oneDriveDocuments = Join-Path $env:OneDrive "Documents"
 
-# Validate if OneDrive path exists
-if (-Not (Test-Path $oneDriveDocuments)) {
-    Write-Error "OneDrive path not found: $oneDriveDocuments"
-    exit
-}
-
-# Create a folder for Speedtest
+# Create a folder for speedtest
 $speedtestFolder = "$oneDriveDocuments\Speedtest"
 $speedtestExe = Join-Path $speedtestFolder "speedtest.exe"
-$resultsFilePath = Join-Path $speedtestFolder "Speedtest_result_of_$env:COMPUTERNAME.txt"
-$logFile = Join-Path $speedtestFolder "log.txt"
+
+# Get device name
+$computerName = $env:COMPUTERNAME
+
+# Set the file name and path of the output
+$resultsFilePath = Join-Path $speedtestFolder "speedtest_result_of_$computerName.xml"
+$logFile = Join-Path $speedtestFolder "error_log.txt"
 
 # Ensure speedtest folder exists
-try {
+if (-Not (Test-Path $speedtestFolder)) {
+    New-Item -Path $speedtestFolder -ItemType Directory
     if (-Not (Test-Path $speedtestFolder)) {
-        New-Item -Path $speedtestFolder -ItemType Directory -Force
-        Write-Host "Speedtest folder created at: $speedtestFolder"
+        throw "Failed to create Speedtest folder: $speedtestFolder"
     }
-} catch {
-    Write-Error "Failed to create Speedtest folder: $_"
-    "[$(Get-Date)] Error: $_" | Out-File -FilePath $logFile -Append
-    exit
 }
 
-# Download Speedtest CLI with retry logic
+# Download Speedtest CLI
 try {
     if (-Not (Test-Path $speedtestExe)) {
         Write-Host "Speedtest CLI not found. Downloading..."
+        $retryCount = 0
         $maxRetries = 3
-        for ($retryCount = 0; $retryCount -lt $maxRetries; $retryCount++) {
+        while ($retryCount -lt $maxRetries) {
             try {
                 Invoke-WebRequest -Uri "https://install.speedtest.net/app/cli/ookla-speedtest-1.0.0-win64.zip" -OutFile "$speedtestFolder\speedtest.zip"
                 Expand-Archive -Path "$speedtestFolder\speedtest.zip" -DestinationPath $speedtestFolder
                 Remove-Item "$speedtestFolder\speedtest.zip" -Force  # Cleanup
                 break
-            } catch {
-                if ($retryCount -eq $maxRetries - 1) {
-                    throw "Max retries reached for downloading Speedtest CLI."
+            }
+            catch {
+                $retryCount++
+                if ($retryCount -eq $maxRetries) {
+                    throw
                 }
-                Write-Warning "Retrying download... Attempt $($retryCount + 1) of $maxRetries"
-                Start-Sleep -Seconds 5
+                Start-Sleep -Seconds 5  # Wait before retry
             }
         }
     }
-} catch {
+    else {
+        Write-Host "Speedtest CLI found, proceeding to test."
+    }
+}
+catch {
     Write-Error "Error downloading or extracting Speedtest CLI: $_"
     "[$(Get-Date)] Error: $_" | Out-File -FilePath $logFile -Append
-    exit
+    return
 }
 
 # Run Speedtest and output results
 try {
     & $speedtestExe --accept-license --accept-gdpr | Out-File -FilePath $resultsFilePath -Encoding UTF8
     Write-Host "Speedtest results saved to: $resultsFilePath"
-} catch {
+}
+catch {
     Write-Error "Error running Speedtest: $_"
     "[$(Get-Date)] Error: $_" | Out-File -FilePath $logFile -Append
-    exit
+    return
 }
 
 # Send email with results
