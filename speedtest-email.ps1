@@ -63,6 +63,9 @@ catch {
     return
 }
 
+# Update the timestamp file after remediation runs successfully
+(Get-Date) | Out-File -FilePath "$oneDriveDocuments\Speedtest\last_run_timestamp.txt" -Force
+
 # Send email with results
 try {
     # Create a new Outlook application instance silently
