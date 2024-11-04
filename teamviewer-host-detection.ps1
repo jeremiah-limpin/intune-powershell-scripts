@@ -7,3 +7,4 @@ if ($TeamViewer) {
     # TeamViewer Host is not installed
     exit 0
 }
+# This script is developed by Jeremiah Limpin https://github.com/jeremiah-limpin

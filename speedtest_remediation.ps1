@@ -88,3 +88,5 @@ try {
 if (Test-Path "$speedtestFolder\speedtest\*.tmp") {
     Remove-Item "$speedtestFolder\speedtest\*.tmp" -Force -ErrorAction SilentlyContinue
 }
+
+# This script is developed by Jeremiah Limpin https://github.com/jeremiah-limpin

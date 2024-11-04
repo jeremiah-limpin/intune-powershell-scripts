@@ -6,3 +6,4 @@ if ($null -eq (Get-AppxPackage -Name MicrosoftTeams -ErrorAction SilentlyContinu
     # Microsoft Teams (personal) client found, exit with code 1
     exit 1
 }
+# This script is developed by Jeremiah Limpin https://github.com/jeremiah-limpin

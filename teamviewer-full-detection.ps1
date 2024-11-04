@@ -9,3 +9,4 @@ if (Test-Path $UninstallPath) {
     # TeamViewer Full is not found
     exit 0
 }
+# This script is developed by Jeremiah Limpin https://github.com/jeremiah-limpin

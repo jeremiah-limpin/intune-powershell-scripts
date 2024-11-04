@@ -4,3 +4,4 @@ if($val.RPSessionInterval -ne 1){
 } else{
     exit 0
 }
+# This script is developed by Jeremiah Limpin https://github.com/jeremiah-limpin

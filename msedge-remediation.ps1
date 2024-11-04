@@ -5,3 +5,5 @@ if (Test-Path $scriptPath) {
 } else {
     exit 2 # Exit with code 2 to indicate an error, script is not found."
 }
+
+# This script is developed by Jeremiah Limpin https://github.com/jeremiah-limpin

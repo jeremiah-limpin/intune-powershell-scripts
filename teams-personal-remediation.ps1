@@ -16,3 +16,4 @@ try {
     # Error removing Microsoft Teams (personal) app
     exit 2
 }
+# This script is developed by Jeremiah Limpin https://github.com/jeremiah-limpin
