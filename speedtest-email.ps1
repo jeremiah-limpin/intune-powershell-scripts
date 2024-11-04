@@ -69,7 +69,7 @@ try {
     $OutlookApp = New-Object -ComObject Outlook.Application
     $Mail = $OutlookApp.CreateItem(0)  # 0 refers to a MailItem in Outlook
 
-    $Mail.Subject = "Speedtest Results for $env:COMPUTERNAME"
+    $Mail.Subject = "Speedtest Result for $env:COMPUTERNAME"
     $Mail.Body = "Attached is the Speedtest result for $env:COMPUTERNAME."
     $Mail.To = "helpdesk@thebackroomop.com"
     $Mail.Attachments.Add($resultsFilePath)
