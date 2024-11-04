@@ -45,8 +45,7 @@ try {
     else {
         Write-Host "Speedtest CLI found, proceeding to test."
     }
-}
-catch {
+} catch {
     Write-Error "Error downloading or extracting Speedtest CLI: $_"
     "[$(Get-Date)] Error: $_" | Out-File -FilePath $logFile -Append
     return
@@ -65,6 +64,25 @@ catch {
 
 # Update the timestamp file after remediation runs successfully
 (Get-Date) | Out-File -FilePath "$oneDriveDocuments\Speedtest\last_run_timestamp.txt" -Force
+
+# Send email with results
+try {
+    # Create a new Outlook application instance silently
+    $OutlookApp = New-Object -ComObject Outlook.Application
+    $Mail = $OutlookApp.CreateItem(0)  # 0 refers to a MailItem in Outlook
+
+    $Mail.Subject = "Speedtest Result for $env:COMPUTERNAME"
+    $Mail.Body = "Attached is the Speedtest result for $env:COMPUTERNAME."
+    $Mail.To = "helpdesk@thebackroomop.com"
+    $Mail.Attachments.Add($resultsFilePath)
+    $Mail.Send()
+        
+    Write-Host "Email sent successfully."
+    
+} catch {
+    Write-Error "Error sending email: $_"
+    "[$(Get-Date)] Error: $_" | Out-File -FilePath $logFile -Append
+}
 
 # Clean up temporary files
 if (Test-Path "$speedtestFolder\speedtest\*.tmp") {
