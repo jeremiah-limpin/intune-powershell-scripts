@@ -1,18 +1,24 @@
 # Script to remove the Microsoft Teams consumer app on Windows 11
-try {
-    # Check if the Microsoft Teams (personal) app is installed
-    $teamsApp = Get-AppxPackage -Name MicrosoftTeams -ErrorAction SilentlyContinue
-    if ($null -eq $teamsApp) {
-        # Microsoft Teams (personal) app not found; exit with code 0 (no action needed)
-        exit 0
-    }
-    # Remove the Microsoft Teams (personal) app
-    $teamsApp | Remove-AppxPackage -ErrorAction Stop
-    # Successfully removed; exit with code 0
-    exit 0
+$teamsApp = Get-AppxPackage -Name MicrosoftTeams -ErrorAction SilentlyContinue
 
-} catch {
-    # Error encountered while attempting to remove the app; exit with code 2
+if ($teamsApp) {
+    # Attempt to remove the Microsoft Teams (personal) app
+    try {
+        $teamsApp | Remove-AppxPackage -ErrorAction Stop
+    } catch {
+        # If removal fails, exit with code 2 (indicating an error occurred)
+        exit 2
+    }
+    # Re-check if the app is still installed
+    $teamsApp = Get-AppxPackage -Name MicrosoftTeams -ErrorAction SilentlyContinue
+}
+
+# Determine final exit code
+if ($teamsApp) {
+    # Microsoft Teams (personal) client is still found, indicating removal failure
     exit 2
+} else {
+    # Microsoft Teams (personal) client not found, removal successful
+    exit 0
 }
 # This script is developed by Jeremiah Limpin https://github.com/jeremiah-limpin

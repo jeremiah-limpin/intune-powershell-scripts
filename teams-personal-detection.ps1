@@ -1,5 +1,7 @@
 # Check if Microsoft Teams (personal) client is installed
-if ((Get-AppxPackage -Name MicrosoftTeams -ErrorAction SilentlyContinue)) {
+$teamsApp = Get-AppxPackage -Name MicrosoftTeams -ErrorAction SilentlyContinue
+
+if ($teamsApp) {
     # Microsoft Teams (personal) client found, exit with code 1
     exit 1
 } else {
