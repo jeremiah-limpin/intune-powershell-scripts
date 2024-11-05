@@ -23,7 +23,7 @@ if (-Not (Test-Path $speedtestFolder)) {
 # Download Speedtest CLI
 try {
     if (-Not (Test-Path $speedtestExe)) {
-        Write-Host "Speedtest CLI not found. Downloading..."
+        # Speedtest CLI not found, proceeds to download the app
         $retryCount = 0
         $maxRetries = 3
         while ($retryCount -lt $maxRetries) {
@@ -43,10 +43,10 @@ try {
         }
     }
     else {
-        Write-Host "Speedtest CLI found, proceeding to test."
+        # Speedtest CLI found, proceeding to test
     }
 } catch {
-    Write-Error "Error downloading or extracting Speedtest CLI: $_"
+    # Error downloading or extracting Speedtest CLI
     "[$(Get-Date)] Error: $_" | Out-File -FilePath $logFile -Append
     return
 }
@@ -54,10 +54,9 @@ try {
 # Run Speedtest and output results
 try {
     & $speedtestExe --accept-license --accept-gdpr | Out-File -FilePath $resultsFilePath -Encoding UTF8
-    Write-Host "Speedtest results saved to: $resultsFilePath"
-}
-catch {
-    Write-Error "Error running Speedtest: $_"
+    # Speedtest results saved to: $resultsFilePath
+} catch {
+    # Error running Speedtest
     "[$(Get-Date)] Error: $_" | Out-File -FilePath $logFile -Append
     return
 }
@@ -76,11 +75,10 @@ try {
     $Mail.To = "helpdesk@thebackroomop.com"
     $Mail.Attachments.Add($resultsFilePath)
     $Mail.Send()
-        
-    Write-Host "Email sent successfully."
+    # Email sent successfully
     
 } catch {
-    Write-Error "Error sending email: $_"
+    # Error sending email
     "[$(Get-Date)] Error: $_" | Out-File -FilePath $logFile -Append
 }
 
