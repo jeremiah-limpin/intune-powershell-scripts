@@ -17,6 +17,7 @@ if (-Not (Test-Path $speedtestFolder)) {
     New-Item -Path $speedtestFolder -ItemType Directory
     if (-Not (Test-Path $speedtestFolder)) {
         throw "Failed to create Speedtest folder: $speedtestFolder"
+        exit 2
     }
 }
 
@@ -48,7 +49,11 @@ try {
 } catch {
     # Error downloading or extracting Speedtest CLI
     "[$(Get-Date)] Error: $_" | Out-File -FilePath $logFile -Append
-    return
+    # Clean up temporary files
+    if (Test-Path "$speedtestFolder\speedtest\*.tmp") {
+        Remove-Item "$speedtestFolder\speedtest\*.tmp" -Force -ErrorAction SilentlyContinue
+    }
+    exit 2
 }
 
 # Run Speedtest and output results
@@ -58,7 +63,11 @@ try {
 } catch {
     # Error running Speedtest
     "[$(Get-Date)] Error: $_" | Out-File -FilePath $logFile -Append
-    return
+    # Clean up temporary files
+    if (Test-Path "$speedtestFolder\speedtest\*.tmp") {
+        Remove-Item "$speedtestFolder\speedtest\*.tmp" -Force -ErrorAction SilentlyContinue
+    }
+    exit 2
 }
 
 # Update the timestamp file after remediation runs successfully
@@ -76,15 +85,20 @@ try {
     $Mail.Attachments.Add($resultsFilePath)
     $Mail.Send()
     # Email sent successfully
-    
+
+    # Clean up temporary files
+    if (Test-Path "$speedtestFolder\speedtest\*.tmp") {
+        Remove-Item "$speedtestFolder\speedtest\*.tmp" -Force -ErrorAction SilentlyContinue
+    }
+    exit 0
 } catch {
     # Error sending email
     "[$(Get-Date)] Error: $_" | Out-File -FilePath $logFile -Append
-}
-
-# Clean up temporary files
-if (Test-Path "$speedtestFolder\speedtest\*.tmp") {
-    Remove-Item "$speedtestFolder\speedtest\*.tmp" -Force -ErrorAction SilentlyContinue
+    # Clean up temporary files
+    if (Test-Path "$speedtestFolder\speedtest\*.tmp") {
+        Remove-Item "$speedtestFolder\speedtest\*.tmp" -Force -ErrorAction SilentlyContinue
+    }
+    exit 2
 }
 
 # This script is developed by Jeremiah Limpin https://github.com/jeremiah-limpin
