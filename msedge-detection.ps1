@@ -28,5 +28,4 @@ if (-not (Test-Path $scriptPath)) {
     # Exit with code 0 if the script exists
     exit 0
 }
-
 # This script is developed by Jeremiah Limpin https://github.com/jeremiah-limpin
