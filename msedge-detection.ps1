@@ -10,18 +10,6 @@ if (-not (Test-Path $scriptPath)) {
     # If the script file is not found, create it with specified content
     Set-Content -Path $scriptPath -Value $scriptContent
     
-    # Define the task action to run the script
-    $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-File `"$scriptPath`""
-    
-    # Define the task trigger for system startup
-    $trigger = New-ScheduledTaskTrigger -AtStartup
-    
-    # Define the task settings
-    $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable
-    
-    # Register the scheduled task
-    Register-ScheduledTask -Action $action -Trigger $trigger -Settings $settings -TaskName "OpenMicrosoftEdge" -Description "Opens Microsoft Edge at startup if the script is missing"
-    
     # Exit with code 1 to indicate remediation occurred
     exit 1
 } else {
