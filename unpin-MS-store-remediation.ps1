@@ -32,3 +32,4 @@ if($finalname){
     $UnpinCommand = Get-TaskVerb 5387
     ((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | Where-Object{$_.Name -eq $finalname}).Verbs() | Where-Object{$_.Name -match "$UnpinCommand"} | ForEach-Object{$_.DoIt(); $exec = $true}
 }
+# This script is developed by Jeremiah Limpin https://github.com/jeremiah-limpin

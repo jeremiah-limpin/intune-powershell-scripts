@@ -35,3 +35,4 @@ else {
     Write-Host "Microsoft Store is not pinned."
     exit 0
 }
+# This script is developed by Jeremiah Limpin https://github.com/jeremiah-limpin
